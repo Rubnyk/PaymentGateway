@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 namespace PaymentGateway.Application.Payments.Commands
 {
     public class PayCommandDto
-    {
-        public string ChargeResult { get; set; }
-        public string ResultReason { get; set; }
+    {        
     }
 }

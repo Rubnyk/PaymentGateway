@@ -21,44 +21,11 @@ namespace PaymentGateway.Api.Handlers
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 var exception = exceptionHandlerPathFeature.Error;
                 string result = "";
-                if (exceptionHandlerPathFeature?.Error is ValidationException)
+                result = JsonConvert.SerializeObject(new
                 {
-                    ValidationException ex = (ValidationException)exceptionHandlerPathFeature?.Error;
-                    var err = ex.Errors.LastOrDefault();
-                    result = JsonConvert.SerializeObject(new
-                    {
-                        ReturnCode = err.ErrorCode,
-                        Description = err.ErrorMessage
-                    });
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                }
-                else
-                 if (exceptionHandlerPathFeature?.Error is TimeoutException)
-                {
-                    TimeoutException ex = (TimeoutException)exceptionHandlerPathFeature?.Error;
-                    result = JsonConvert.SerializeObject(new
-                    {
-                        Title = "Timeout.",
-                        Detail = ex.Message
-                    }); ;
-                    context.Response.StatusCode = (int)HttpStatusCode.RequestTimeout;
-                }
-                else
-                 if (exceptionHandlerPathFeature?.Error is NotFoundException)
-                {
-                    NotFoundException ex = (NotFoundException)exceptionHandlerPathFeature?.Error;
-                    result = JsonConvert.SerializeObject(new
-                    {
-                        Title = "Entity not found",
-                        Detail = ex.Message
-                    }); ;
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                }
-
-                else
-                {
-                    throw exceptionHandlerPathFeature?.Error;
-                }
+                   
+                });
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(result).ConfigureAwait(false);

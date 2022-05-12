@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace PaymentGateway.Application.Common.Interfaces
 {
     public interface IHttpService
     {
-        Task<T> Post<T>(string url, object data);
+        Task<HttpResponseMessage> Post(string url, object data, Dictionary<string, string> headers = null);
     }
 }
