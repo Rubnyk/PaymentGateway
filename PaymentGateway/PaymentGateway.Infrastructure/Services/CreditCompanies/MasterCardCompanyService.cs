@@ -4,8 +4,6 @@ using PaymentGateway.Application.Common.Exceptions;
 using PaymentGateway.Application.Common.Interfaces;
 using PaymentGateway.Application.Common.Interfaces.Companies;
 using PaymentGateway.Application.Payments.Commands;
-using PaymentGateway.Domain.Constants;
-using PaymentGateway.Domain.Models.Companies.MasterCard;
 using PaymentGateway.Domain.ValueObjects;
 using System;
 using System.Net.Http;
@@ -25,7 +23,7 @@ namespace PaymentGateway.Infrastructure.Services.CreditCompanies
             _httpService = httpService;
         }
 
-        public async Task<PayResponse> Pay(PayCommand request)
+        public async Task<object> Pay(PayCommand request)
         {
 
             var name = new FullName(request.FullName);
@@ -55,10 +53,8 @@ namespace PaymentGateway.Infrastructure.Services.CreditCompanies
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    return new PayResponse
-                    {
-                        ErrorCode = 0,
-                        ErrorMessage = "Ok"
+                    return new 
+                    {                       
                     };
                 case System.Net.HttpStatusCode.BadRequest:
                     var res = await ReadResponse(response);

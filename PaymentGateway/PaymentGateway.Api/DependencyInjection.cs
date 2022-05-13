@@ -16,6 +16,7 @@ namespace PaymentGateway.Api
         public static IServiceCollection AddConfiguration(this IServiceCollection services, IConfiguration configuration)
         {         
             services.Configure<JwtConfig>(configuration.GetSection("JwtConfig"));
+            services.Configure<RetryConfig>(configuration.GetSection("RetryConfig"));
             return services;
         }
 

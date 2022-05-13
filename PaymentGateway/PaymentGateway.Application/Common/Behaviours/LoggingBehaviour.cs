@@ -20,7 +20,7 @@ namespace PaymentGateway.Application.Common.Behaviours
             await Task.Run(() =>
             {
                 var requestName = typeof(TRequest).Name;
-                _logger.LogInformation("Request: {Name} {@Request}", requestName, Newtonsoft.Json.JsonConvert.SerializeObject(request));
+                _logger.LogInformation("Request: {Name} {@Request}", requestName, "");
             });
 
         }

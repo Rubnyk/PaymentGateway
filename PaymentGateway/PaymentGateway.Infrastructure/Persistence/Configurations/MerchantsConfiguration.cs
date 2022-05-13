@@ -4,12 +4,12 @@ using PaymentGateway.Domain.Entities;
 
 namespace PaymentGateway.Infrastructure.Persistence.Configurations
 {
-    public class UsersConfiguration : IEntityTypeConfiguration<User>
+    public class MerchantsConfiguration : IEntityTypeConfiguration<Merchant>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Merchant> builder)
         {
-            builder.ToTable("Users");
-            builder.HasKey(nameof(User.UserName));
+            builder.ToTable("Merchants");
+            
         }
     }
 }

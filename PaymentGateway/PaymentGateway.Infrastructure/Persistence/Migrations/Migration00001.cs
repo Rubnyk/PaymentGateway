@@ -13,23 +13,27 @@ namespace PaymentGateway.Infrastructure.Persistence.Migrations
 
         public override void Up()
         {
-            if (!Schema.Table("Users").Exists())
+            if (!Schema.Table("Merchants").Exists())
             {
-                Create.Table("Users")
-                     .WithColumn("Username").AsString().PrimaryKey()
-                     .WithColumn("Password").AsString().NotNullable()
-                     .WithColumn("CreationDate").AsDateTime().NotNullable()
-                     .WithColumn("UpdationDate").AsDateTime().NotNullable()
-                     .WithColumn("ExpirationDate").AsDateTime().NotNullable();
+                Create.Table("Merchants")
+                     .WithColumn("MerchantId").AsString().PrimaryKey();
+                     
 
-                Insert.IntoTable("Users").Row(new
+                Insert.IntoTable("Merchants").Row(new
                 {
-                    Username = "admin",
-                    Password = "MU9NdE5mRTUzMThGMHd6STBOUzJPeFdBZmVMMWZrRXn2I6eyUh2dmpKG3MXo7dOG",    //Orpak1983                
-                    CreationDate = DateTime.UtcNow,
-                    UpdationDate = DateTime.UtcNow,
-                    ExpirationDate = DateTime.UtcNow.AddDays(360)
+                    MerchantId = "revolve"
                 });
+            }
+
+            if (!Schema.Table("Transactions").Exists())
+            {
+                Create.Table("Transactions")
+                     .WithColumn("id").AsInt64().Identity().PrimaryKey()
+                     .WithColumn("merchantId").AsString().PrimaryKey()
+                     .WithColumn("eventTime").AsDateTime2().NotNullable()
+                     .WithColumn("transactionDate").AsString().NotNullable()
+                     .WithColumn("amount").AsDecimal().NotNullable()
+                     .WithColumn("errorMessage").AsString().NotNullable();
             }
         }
     }

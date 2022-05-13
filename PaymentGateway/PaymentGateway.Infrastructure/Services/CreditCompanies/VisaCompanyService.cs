@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using PaymentGateway.Application.Common.Exceptions;
 using PaymentGateway.Application.Common.Interfaces;
 using PaymentGateway.Application.Common.Interfaces.Companies;
 using PaymentGateway.Application.Payments.Commands;
-using PaymentGateway.Domain.Models.Companies.MasterCard;
 using PaymentGateway.Domain.ValueObjects;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
+using static PaymentGateway.Domain.Constants.CreditCardConstants;
 
 namespace PaymentGateway.Infrastructure.Services.CreditCompanies
 {
@@ -20,7 +24,7 @@ namespace PaymentGateway.Infrastructure.Services.CreditCompanies
             _httpService = httpService;
         }
 
-        public async Task<PayResponse> Pay(PayCommand request)
+        public async Task<object> Pay(PayCommand request)
         {
 
             var name = new FullName(request.FullName);
@@ -44,7 +48,40 @@ namespace PaymentGateway.Infrastructure.Services.CreditCompanies
 
             var response =  await _httpService.Post(url, body, headers);
 
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+
+                    await ValidateResponse(response);
+
+                    return new 
+                    {
+
+                    };
+               
+                default:
+                    throw new Exception("ServerError");
+            }
+
             return null;
         }
+
+        private async Task ValidateResponse(HttpResponseMessage response)
+        {
+            var result = JsonConvert.DeserializeObject<VisaCompanyResponse>(await response.Content.ReadAsStringAsync());
+
+            if (result.ChargeResult == VisaResponses.Failure)
+            {
+                throw new ChargeDeclineException(result.ResultReason);
+            }
+
+        }
+    }
+
+    public class VisaCompanyResponse
+    {
+        public string ChargeResult { get; set; }
+        public string ResultReason { get; set; }
+
     }
 }

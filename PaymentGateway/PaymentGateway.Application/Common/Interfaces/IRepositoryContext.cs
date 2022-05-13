@@ -8,7 +8,7 @@ namespace PaymentGateway.Application.Common.Interfaces
 {
     public interface IRepositoryContext : IDisposable
     {
-        DbSet<User> Users { get; set; }
+        DbSet<Transaction> Transactions { get; set; }
         Task<int> SaveChangesAsync();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

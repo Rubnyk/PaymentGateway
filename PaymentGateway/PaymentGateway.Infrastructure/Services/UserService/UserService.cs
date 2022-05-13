@@ -10,6 +10,6 @@ namespace PaymentGateway.Infrastructure.Services
         {
             _httpContext = httpContext;
         }
-        public string UserName { get => _httpContext.HttpContext.Items["UserName"]?.ToString(); set => _httpContext.HttpContext.Items["UserName"] = value; }
+        public string MerchantId { get => _httpContext.HttpContext.Items["MerchantId"]?.ToString(); set => _httpContext.HttpContext.Items["MerchantId"] = value; }
     }
 }

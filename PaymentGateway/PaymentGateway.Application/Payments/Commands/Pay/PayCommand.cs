@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PaymentGateway.Application.Common.Exceptions;
 using PaymentGateway.Application.Common.Interfaces;
 using PaymentGateway.Application.Common.Interfaces.Companies;
-using PaymentGateway.Domain.ValueObjects;
+using PaymentGateway.Application.Retry.Commands;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace PaymentGateway.Application.Payments.Commands
 {
     public class PayCommand : IRequest<object>
-    {      
+    {
         public string FullName { get; set; }
         public string CreditCardNumber { get; set; }
         public string CreditCardCompany { get; set; }
@@ -23,10 +23,12 @@ namespace PaymentGateway.Application.Payments.Commands
     public class PayCommandHandler : IRequestHandler<PayCommand, object>
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMediator _mediator;
 
-        public PayCommandHandler(IServiceProvider serviceProvider)
+        public PayCommandHandler(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
+            _mediator = mediator;
         }
         public async Task<object> Handle(PayCommand request, CancellationToken cancellationToken)
         {
@@ -43,15 +45,22 @@ namespace PaymentGateway.Application.Payments.Commands
                     throw new Exception("Invalid provider");
             }
 
-
             try
             {
-                await _service.Pay(request);
-
-
+                await _mediator.Send(new RetryCommand
+                {
+                    action = new Action(() => { _service.Pay(request).GetAwaiter().GetResult(); })
+                });
             }
             catch (ChargeDeclineException ex)
             {
+                await _mediator.Send(new CreatePaymentCommand
+                {
+                    TransactionDate = request.ExpirationDate,
+                    Amount = request.Amount,
+                    ErrorMessage = ex.Message
+                });
+
                 throw ex;
             }
             catch (Exception ex)

@@ -5,6 +5,6 @@
     /// </summary>
     public interface IUserService
     {
-        string UserName { get; set; }
+        string MerchantId { get; set; }
     }
 }
