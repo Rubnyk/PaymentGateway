@@ -9,15 +9,31 @@ namespace Domain.UnitTests.ValueObjects
         [Fact]
         public void ShouldReturnFirstNameTest()
         {
+
             var name = new FullName("Ilan Hofshi");
+
             name.FirstName.Should().Be("Ilan");
+
         }
 
         [Fact]
         public void ShouldReturnLastNameTest()
         {
+
             var name = new FullName("Ilan Hofshi");
+
             name.LastName.Should().Be("Hofshi");
+
+        }
+
+        [Fact]
+        public void ShouldReturnFullNameTest()
+        {
+
+            var name = new FullName("Ilan", "Hofshi");
+
+            name.Name.Should().Be("Ilan Hofshi");
+
         }
     }
 }
